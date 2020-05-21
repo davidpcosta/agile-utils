@@ -1,0 +1,42 @@
+.user-card-container {
+    width: 130px;
+    >.card {
+        position: relative;
+        background-color: #f8fafb;
+        margin: 10px auto;
+        width: 100px;
+        height: 144px;
+        border-radius: 10px;
+        
+        >.icon-waiting,
+        >.icon-done,
+        >.card-number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            font-weight: 800;
+        }
+
+        >.icon-waiting {
+            color: #dddddd;
+        }
+        >.icon-done {
+            color: #306754;
+        }
+        >.card-number {
+            font-size: 34px;
+        }
+    }
+    >.user-name {
+        text-align: center;
+        margin: 5px 15px;
+        overflow: hidden;
+        height: 50px;
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.1;
+        color: #f8fafb;
+    }
+}

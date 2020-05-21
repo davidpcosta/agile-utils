@@ -1,0 +1,17 @@
+<div class="planning-page-container" *ngIf="session">
+    <div class="table-container">
+        <ul>
+            <li *ngFor="let user of session.users">
+                <user-card [user]="user" [showVotes]="showVotes"></user-card>
+            </li>
+        </ul>
+    </div>
+
+    <div class="deck-container">
+        <ul>
+            <li *ngFor="let card of session.deck">
+                <deck-card [card]="card"></deck-card>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+<div class="user-card-container">
+    <div class="card">
+        <span class="icon-waiting" *ngIf="!user.vote && !showVotes"><i class="material-icons">thumb_up</i></span>
+        <span class="icon-done" *ngIf="user.vote && !showVotes"><i class="material-icons">thumb_up</i></span>
+        <span class="card-number" *ngIf="showVotes">{{ user.vote }}</span>
+    </div>
+    <span class="user-name">{{ user.name }}</span>
+    
+</div>
