@@ -1,0 +1,35 @@
+.sign-in-page {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border: 1px solid #f8fafb;
+    border-radius: 10px;
+    padding: 50px;
+
+    >.field-container {
+        margin: 10px 0;
+        >label {
+            display: block;
+            color: #f8fafb;
+            font-size: 14px;
+            font-weight: 400;
+            margin: 10px 0;
+        }
+        >input {
+            border: 1px solid #f8fafb;
+            padding: 10px 20px;
+            color: #000000;
+            font-size: 14px;
+        }
+    }
+
+    >button {
+        width: 100%;
+        padding: 10px 20px;
+        color: #000000;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 20px;
+    }
+}

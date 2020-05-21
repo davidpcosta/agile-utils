@@ -19,13 +19,15 @@ export class PlanningComponent implements OnInit {
     this.routeSub = this.route.params.subscribe(params => {
       this.sessionId = params.sessionId;
       console.log('sessionId', this.sessionId);
-      
-    });
 
-    let fetchTask: Observable<any> = this.firestore.collection('sessions').doc(this.sessionId).valueChanges();
-    fetchTask.subscribe(data => {
-      this.session = data;
-      this.showVotes = this.hasAllVotes();
+      if (this.sessionId) {
+        let fetchTask: Observable<any> = this.firestore.collection('sessions').doc(this.sessionId).valueChanges();
+        fetchTask.subscribe(data => {
+          this.session = data;
+          this.showVotes = this.hasAllVotes();
+        });
+      }
+      
     });
   }
 
