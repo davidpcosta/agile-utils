@@ -27,7 +27,9 @@ import { environment } from '../environments/environment';
     FormsModule,
     AngularFireModule.initializeApp(environment.firebase)
   ],
-  providers: [],
+  providers: [
+    {provide: Window, useValue: window},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

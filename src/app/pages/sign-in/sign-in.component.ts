@@ -28,14 +28,16 @@ export class SignInComponent implements OnInit {
 
   ngOnInit(): void {
     this.routeSub = this.route.params.subscribe(params => {
-      this.sessionId = params.sessionId;
-      console.log('sessionId', this.sessionId);
 
+      // Retrieve existing session is exists
+      this.sessionId = params.sessionId;
       if (this.sessionId) {
         let fetchTask: Observable<any> = this.firestore.collection('sessions').doc(this.sessionId).valueChanges();
         fetchTask.subscribe(data => {
-          this.projectName = data.projectName;
-          this.session = data;
+          if (data) {
+            this.projectName = data.projectName;
+            this.session = data;
+          }
         });
       }
     });
@@ -44,12 +46,7 @@ export class SignInComponent implements OnInit {
   }
 
   login() {
-    console.log('login', this.userName, this.projectName);
-
-
-    
     if (this.userName.length > 0 && this.projectName.length > 0) {
-
       this.auth.signInAnonymously()
         .then(data => {
           const uid = data.user.uid;
@@ -72,7 +69,7 @@ export class SignInComponent implements OnInit {
   }
 
   createSession(userUid: string) {
-    if (this.sessionId) {
+    if (this.session) {
       this.addToExistingSession(userUid);
     }
     else {
@@ -81,45 +78,52 @@ export class SignInComponent implements OnInit {
   }
 
   addToExistingSession(userUid: string) {
-    const session = this.firestore.collection('sessions').doc(this.sessionId);
-    
-    const user = {
-      uid: userUid,
+    const newUser = {
       name: this.userName
-    }
-    this.session.users.push(user);
-    console.log(this.session);
+    };
 
-    this.firestore.collection('sessions').doc(this.sessionId).set(this.session)
-    .then(data => {
-      console.log(data);
-      this.router.navigate([`/planning/${this.sessionId}`]);
-    })
-    .catch(error => {
-      alert('Sorry! No idea what happened! Check console log.');
-      console.error(error);
-    });
+    let usersRef = this.firestore.collection('sessions').doc(this.sessionId).collection('users');
+    console.log(userUid);
     
+    usersRef.doc(userUid).set(newUser)
+      .then(data => {
+        console.log(data);
+        
+        this.router.navigate([`/planning/${this.sessionId}`]);
+      })
+      .catch(error => {
+        alert('Sorry! No idea what happened! Check console log.');
+        console.error(error);
+      });
+
   }
 
   createNewSession(userUid: string) {
-    const sessionsCollection = this.firestore.collection('sessions');
-    const session = {
+
+    const newSession = {
       projectName: this.projectName,
-      users: [{
-        uid: userUid,
-        name: this.userName
-      }],
+      userOwner: userUid,
       deck: this.defaultDeck
     };
-    sessionsCollection.add(session)
-    .then(data => {
-      const sessionId = data.id;
-      this.router.navigate([`/planning/${sessionId}`]);
+
+    const newUser = {
+      name: this.userName
+    };
+
+    const sessionsCollection = this.firestore.collection('sessions');
+    sessionsCollection.add(newSession).then(data => {
+      const newSessionId = data.id;
+      data.collection('users').doc(userUid).set(newUser).then(data => {
+        this.router.navigate([`/planning/${newSessionId}`]);
+      })
+        .catch(error => {
+          alert('Sorry! No idea what happened! Check console log.');
+          console.error(error);
+        });
     })
-    .catch(error => {
-      alert('Sorry! No idea what happened! Check console log.');
-      console.error(error);
-    });
+      .catch(error => {
+        alert('Sorry! No idea what happened! Check console log.');
+        console.error(error);
+      });
   }
 }

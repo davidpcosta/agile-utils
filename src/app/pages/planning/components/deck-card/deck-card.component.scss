@@ -7,6 +7,18 @@
         width: 80px;
         height: 116px;
         border-radius: 10px;
+        cursor: pointer;
+        opacity: 0.5;
+
+        &.selected {
+            // border: 2px solid #000000;
+            // box-sizing: border-box;
+            opacity: 1;
+            >.card-number {
+                font-size: 2em;
+            }
+
+        }
 
         >.card-number {
             position: absolute;

@@ -1,17 +1,24 @@
 <div class="planning-page-container" *ngIf="session">
+    <h1>{{ session.projectName }}</h1>
     <div class="table-container">
-        <ul>
-            <li *ngFor="let user of session.users">
+        <ul *ngIf="users">
+            <li *ngFor="let user of users">
                 <user-card [user]="user" [showVotes]="showVotes"></user-card>
             </li>
         </ul>
     </div>
 
     <div class="deck-container">
-        <ul>
+        <ul *ngIf="session">
             <li *ngFor="let card of session.deck">
-                <deck-card [card]="card"></deck-card>
+                <deck-card [card]="card" [(ngModel)]="selectedCard"></deck-card>
             </li>
         </ul>
+        <div *ngIf="currentUser">
+            <span>{{ currentUser.name }}</span>
+            <button (click)="vote()">Vote</button>
+            <button (click)="clearVote()">Clear vote</button>
+            <span>{{ inviteUrl }}</span>
+        </div>
     </div>
 </div>

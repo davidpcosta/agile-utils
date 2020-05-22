@@ -1,5 +1,5 @@
 <div class="deck-card-container">
-    <div class="card">
+    <div class="card" [class.selected]="card == selectedCard" (click)="pickCard()">
         <span class="card-number">{{ card }}</span>
     </div>
 </div>
