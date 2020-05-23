@@ -3,6 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
+import { SignInService } from 'src/app/services/sign-in.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -15,11 +16,11 @@ export class SignInComponent implements OnInit {
   sessionId: string;
   session: any;
 
-  defaultDeck: number[] = [0.5, 1, 2, 3, 5, 8, 13, 21];
   projectName: string = '';
   userName: string = '';
 
   constructor(
+    private signInService: SignInService,
     private auth: AngularFireAuth,
     private firestore: AngularFirestore,
     private router: Router,
@@ -46,22 +47,21 @@ export class SignInComponent implements OnInit {
   }
 
   login() {
-    if (this.userName.length > 0 && this.projectName.length > 0) {
-      this.auth.signInAnonymously()
-        .then(data => {
-          const uid = data.user.uid;
-          if (uid) {
-            this.createSession(uid);
-          }
-        })
-        .catch(error => {
-          alert('Sorry! No idea what happened! Check console log.');
-          console.error(error);
-        });
-    }
-    else {
+    if (this.userName.length == 0 || this.projectName.length == 0) {
       alert('Please fill your name and project name! :)');
+      return;
     }
+    this.auth.signInAnonymously()
+      .then(data => {
+        const uid = data.user.uid;
+        if (uid) {
+          this.createSession(uid);
+        }
+      })
+      .catch(error => {
+        alert('Sorry! No idea what happened! Check console log.');
+        console.error(error);
+      });
   }
 
   logout() {
@@ -84,11 +84,11 @@ export class SignInComponent implements OnInit {
 
     let usersRef = this.firestore.collection('sessions').doc(this.sessionId).collection('users');
     console.log(userUid);
-    
+
     usersRef.doc(userUid).set(newUser)
       .then(data => {
         console.log(data);
-        
+
         this.router.navigate([`/planning/${this.sessionId}`]);
       })
       .catch(error => {
@@ -98,32 +98,14 @@ export class SignInComponent implements OnInit {
 
   }
 
-  createNewSession(userUid: string) {
+  async createNewSession(userUid: string) {
 
-    const newSession = {
-      projectName: this.projectName,
-      userOwner: userUid,
-      deck: this.defaultDeck
-    };
-
-    const newUser = {
-      name: this.userName
-    };
-
-    const sessionsCollection = this.firestore.collection('sessions');
-    sessionsCollection.add(newSession).then(data => {
-      const newSessionId = data.id;
-      data.collection('users').doc(userUid).set(newUser).then(data => {
-        this.router.navigate([`/planning/${newSessionId}`]);
-      })
-        .catch(error => {
-          alert('Sorry! No idea what happened! Check console log.');
-          console.error(error);
-        });
-    })
-      .catch(error => {
-        alert('Sorry! No idea what happened! Check console log.');
-        console.error(error);
-      });
+    let session = await this.signInService.createNewSession(userUid, this.userName, this.projectName);
+    if (session.sessionId) {
+      console.log('YEP');
+      this.router.navigate([`/planning/${session.sessionId}`]);
+    }
+    
+      
   }
 }
