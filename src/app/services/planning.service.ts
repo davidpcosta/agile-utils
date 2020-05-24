@@ -86,6 +86,8 @@ export class PlanningService {
     return true;
   }
 
+  
+
   getInviteUrl() {
     this.validateSessionId();
     const baseUrl = this.window.location.origin;
