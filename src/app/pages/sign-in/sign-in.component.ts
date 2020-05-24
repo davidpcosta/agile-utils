@@ -78,7 +78,7 @@ export class SignInComponent implements OnInit {
     const { sessionId } = await this.signInService.createNewSession(userUid, this.userName, this.projectName);
     if (!sessionId) {
       alert('Error creating new session! :(');
-      return
+      return;
     }
     this.redirectToPlanningBoard(sessionId);
   }
@@ -95,4 +95,5 @@ export class SignInComponent implements OnInit {
   private redirectToPlanningBoard(sessionId: string) {
     this.router.navigate([`/planning/${sessionId}`]);
   }
+  
 }
