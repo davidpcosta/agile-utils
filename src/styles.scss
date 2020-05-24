@@ -7,6 +7,7 @@ $card-background-color: #f8fafb;
 body {
     font-family: 'Open Sans', sans-serif;
     background-color: #52586b;
+    color: #f8fafb;
     margin: 0;
     padding: 0;
 }
@@ -16,4 +17,21 @@ ul, li {
     margin: 0;
     padding: 0;
     display: inline-block;
+}
+
+button {
+    border: none;
+    background-color: #f8fafb;
+    color: #52586b;
+    font-weight: 600;
+    font-size: 0.8em;
+    padding: 10px 20px;
+    margin: 0 5px;
+    outline: none;
+    cursor: pointer;
+
+    &:disabled {
+        cursor: default;
+        color: lightgray;
+    }
 }

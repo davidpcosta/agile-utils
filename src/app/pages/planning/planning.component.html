@@ -1,6 +1,12 @@
 <div class="planning-page-container" *ngIf="session">
     <header>
-        <h1>{{ session.projectName }}</h1>
+        <div class="titles">
+            <h1>{{ session.projectName }}</h1>
+            <span>
+                <i class="material-icons">link</i>
+                <span>{{ inviteUrl }}</span>
+            </span>
+        </div>
         <div class="actions" *ngIf="isOwner">
             <button (click)="showCards()" [disabled]="!hasAllVotes || isShowCards"  type="button">Show cards</button>
             <button (click)="newRound()" [disabled]="!isShowCards" type="button">New round</button>
@@ -21,11 +27,10 @@
                 <deck-card [card]="card" [disabled]="isShowCards" [(ngModel)]="selectedCard"></deck-card>
             </li>
         </ul>
-        <div *ngIf="currentUser">
-            <span>{{ currentUser.name }}</span>
-            <button (click)="vote()" [disabled]="isShowCards">Vote</button>
-            <button (click)="clearVote()" [disabled]="isShowCards">Clear vote</button>
-            <span>{{ inviteUrl }}</span>
+        <div class="current-user-container" *ngIf="currentUser">
+            <span class="user-name">{{ currentUser.name }}</span>
+            <button (click)="vote()" [disabled]="!selectedCard || isShowCards">Vote</button>
+            <button (click)="clearVote()" [disabled]="!selectedCard || isShowCards">Clear vote</button>
         </div>
     </div>
 </div>

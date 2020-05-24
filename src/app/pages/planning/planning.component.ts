@@ -47,7 +47,7 @@ export class PlanningComponent implements OnInit {
         this.startMyUserObserver();
 
         // TODO: Refactor
-        this.isOwner = this.session && this.session.userOwner == this.userUid;
+        this.isOwner = this.session && this.session.ownerUserUid == this.userUid;
       });
     });
   }
@@ -80,7 +80,7 @@ export class PlanningComponent implements OnInit {
       this.isShowCards = session.showCards;
 
       // TODO: Refactor
-      this.isOwner = this.session && this.session.userOwner == this.userUid;
+      this.isOwner = this.session && this.session.ownerUserUid == this.userUid;
     });
   }
 

@@ -8,6 +8,7 @@ const routes: Routes = [
   { path: 'signin', component: SignInComponent },
   { path: 'signin/:sessionId', component: SignInComponent },
   { path: 'planning/:sessionId', component: PlanningComponent },
+  { path: '**', redirectTo: 'signin'}
 ];
 
 @NgModule({
