@@ -13,20 +13,17 @@ export class PlanningComponent implements OnInit {
 
   routeSub: Subscription;
 
-  showVotes: boolean = false;
-
-
+  userUid: string;
   session: any;
-
   deck: number[];
   users: any[];
-
   currentUser: any;
-
-  selectedCard: number;
-  hasAllVotes: boolean;
   inviteUrl: string;
 
+  selectedCard: number;
+  hasAllVotes: boolean = false;
+  isShowCards: boolean = false;
+  isOwner: boolean = false;
 
   constructor(
     private auth: AngularFireAuth,
@@ -44,10 +41,13 @@ export class PlanningComponent implements OnInit {
       this.startSessionObserver();
       this.startUsersObserver();
 
-
       this.auth.user.subscribe(user => {
+        this.userUid = user.uid;
         this.planningService.setUserUid(user.uid);
         this.startMyUserObserver();
+
+        // TODO: Refactor
+        this.isOwner = this.session && this.session.userOwner == this.userUid;
       });
     });
   }
@@ -55,6 +55,7 @@ export class PlanningComponent implements OnInit {
   vote() {
     if (!this.selectedCard) {
       alert('Pick a card!');
+      return;
     }
     this.planningService.vote(this.selectedCard);
   }
@@ -65,16 +66,31 @@ export class PlanningComponent implements OnInit {
     });
   }
 
+  async showCards() {
+    this.isShowCards = await this.planningService.showCards();
+  }
+
+  async newRound() {
+    await this.planningService.newRound(this.users);
+  }
+
   private startSessionObserver() {
     this.planningService.observeSession().subscribe(session => {
       this.session = session;
+      this.isShowCards = session.showCards;
+
+      // TODO: Refactor
+      this.isOwner = this.session && this.session.userOwner == this.userUid;
     });
   }
 
   private startUsersObserver() {
     this.planningService.observeUsers().subscribe(users => {
       this.users = [];
-      users.forEach(user => {
+      users.forEach(snapshot => {
+        const id = snapshot.payload.doc.id;
+        const data = snapshot.payload.doc.data();
+        const user = { id, ...data};
         this.users.push(user);
       });
       this.hasEverbodyVoted();
@@ -100,5 +116,4 @@ export class PlanningComponent implements OnInit {
     }
     this.hasAllVotes = hasAllVotes;
   }
-
 }

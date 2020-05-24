@@ -13,8 +13,7 @@ import { ValueAccessorBase } from './value-acessor-base';
 export class DeckCardComponent extends ValueAccessorBase<number> {
 
   @Input() card: number;
-  @Input() userUid: string;
-  @Input() sessionId: string;
+  @Input() disabled: boolean;
 
   constructor() {
     super();
@@ -29,7 +28,7 @@ export class DeckCardComponent extends ValueAccessorBase<number> {
   }
 
   pickCard() {
-    console.log('card picked', this.card);
+    if (this.disabled) return;
     this.selectedCard = this.card;
   }
 

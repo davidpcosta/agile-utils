@@ -53,12 +53,37 @@ export class PlanningService {
 
   observeUsers() {
     this.validateSessionId();
-    return this.usersRef.valueChanges();
+    return this.usersRef.snapshotChanges();
   }
 
   observeMyUser() {
     this.validateUserUid();
     return this.userRef.valueChanges();
+  }
+
+  async showCards() {
+    this.validateSessionId();
+    await this.sessionRef.update({ showCards: true })
+      .catch(error => {
+        console.error(error);
+        return false;
+      });
+    return true;
+  }
+
+  async newRound(users: any[]) {
+    this.validateSessionId();
+    await this.sessionRef.update({ showCards: false })
+      .catch(error => {
+        console.error(error);
+        return false;
+      });
+
+    users.forEach(user => {
+      this.usersRef.doc(user.id).update({ vote: 0 });
+    });
+
+    return true;
   }
 
   getInviteUrl() {
