@@ -14,7 +14,6 @@ export class SignInComponent implements OnInit {
 
   routeSub: Subscription;
   sessionId: string;
-  session: any;
 
   projectName: string = '';
   userName: string = '';
@@ -22,31 +21,24 @@ export class SignInComponent implements OnInit {
   constructor(
     private signInService: SignInService,
     private auth: AngularFireAuth,
-    private firestore: AngularFirestore,
     private router: Router,
     private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
     this.routeSub = this.route.params.subscribe(params => {
+      const { sessionId } = params;
+      this.sessionId = sessionId;
 
       // Retrieve existing session is exists
-      this.sessionId = params.sessionId;
-      if (this.sessionId) {
-        let fetchTask: Observable<any> = this.firestore.collection('sessions').doc(this.sessionId).valueChanges();
-        fetchTask.subscribe(data => {
-          if (data) {
-            this.projectName = data.projectName;
-            this.session = data;
-          }
-        });
+      if (sessionId) {
+        this.retrieveExistingSession(sessionId);
       }
     });
-
-
   }
 
   login() {
+    // Validate fields
     if (this.userName.length == 0 || this.projectName.length == 0) {
       alert('Please fill your name and project name! :)');
       return;
@@ -59,17 +51,22 @@ export class SignInComponent implements OnInit {
         }
       })
       .catch(error => {
-        alert('Sorry! No idea what happened! Check console log.');
+        alert('Sorry! Error with anonymous login.');
         console.error(error);
       });
   }
 
-  logout() {
-    this.auth.signOut();
+  private retrieveExistingSession(sessionId: string) {
+    this.signInService.retrieveExistingSession(sessionId).subscribe(session => {
+      if (!session) {
+        alert('Error retrieving existing session! :(');
+      }
+      this.projectName = session.projectName;
+    });
   }
 
-  createSession(userUid: string) {
-    if (this.session) {
+  private createSession(userUid: string) {
+    if (this.sessionId) {
       this.addToExistingSession(userUid);
     }
     else {
@@ -77,35 +74,25 @@ export class SignInComponent implements OnInit {
     }
   }
 
-  addToExistingSession(userUid: string) {
-    const newUser = {
-      name: this.userName
-    };
-
-    let usersRef = this.firestore.collection('sessions').doc(this.sessionId).collection('users');
-    console.log(userUid);
-
-    usersRef.doc(userUid).set(newUser)
-      .then(data => {
-        console.log(data);
-
-        this.router.navigate([`/planning/${this.sessionId}`]);
-      })
-      .catch(error => {
-        alert('Sorry! No idea what happened! Check console log.');
-        console.error(error);
-      });
-
+  private async createNewSession(userUid: string) {
+    const { sessionId } = await this.signInService.createNewSession(userUid, this.userName, this.projectName);
+    if (!sessionId) {
+      alert('Error creating new session! :(');
+      return
+    }
+    this.redirectToPlanningBoard(sessionId);
   }
 
-  async createNewSession(userUid: string) {
-
-    let session = await this.signInService.createNewSession(userUid, this.userName, this.projectName);
-    if (session.sessionId) {
-      console.log('YEP');
-      this.router.navigate([`/planning/${session.sessionId}`]);
+  private async addToExistingSession(userUid: string) {
+    const success = await this.signInService.addUserToExistingSession(userUid, this.userName);
+    if (!success) {
+      alert('Error adding user to existing session!');
+      return;
     }
-    
-      
+    this.redirectToPlanningBoard(this.sessionId);
+  }
+
+  private redirectToPlanningBoard(sessionId: string) {
+    this.router.navigate([`/planning/${sessionId}`]);
   }
 }
