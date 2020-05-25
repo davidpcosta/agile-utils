@@ -36,6 +36,11 @@ export class PlanningService {
     this.userRef = this.usersRef.doc(userUid);
   }
 
+  exit(userUid: string) {
+    this.validateUserUid();
+    return this.usersRef.doc(userUid).delete();
+  }
+
   vote(card: number) {
     this.validateUserUid();
     return this.userRef.update({ vote: card });

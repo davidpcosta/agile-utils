@@ -16,7 +16,7 @@
 <div class="table-container">
         <ul *ngIf="users">
             <li *ngFor="let user of users">
-                <user-card [user]="user" [showCard]="isShowCards"></user-card>
+                <user-card [user]="user" [isOwner]="isOwner && (userUid !== user.id)" [showCard]="isShowCards" (kickEmitter)="handleKickEvent($event)"></user-card>
             </li>
         </ul>
     </div>
@@ -31,6 +31,7 @@
             <span class="user-name">{{ currentUser.name }}</span>
             <button (click)="vote()" [disabled]="!selectedCard || isShowCards">Vote</button>
             <button (click)="clearVote()" [disabled]="!selectedCard || isShowCards">Clear vote</button>
+            <button (click)="exit()" [disabled]="isOwner">Exit</button>
         </div>
     </div>
 </div>

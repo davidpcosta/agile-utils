@@ -4,5 +4,5 @@
         <span class="icon-done" *ngIf="user.vote && !showCard"><i class="material-icons">thumb_up</i></span>
         <span class="card-number" *ngIf="showCard">{{ user.vote }}</span>
     </div>
-    <span class="user-name">{{ user.name }}</span>
+    <span class="user-name">{{ user.name }}<i *ngIf="isOwner" class="material-icons" (click)="kick()">cancel</i></span>
 </div>

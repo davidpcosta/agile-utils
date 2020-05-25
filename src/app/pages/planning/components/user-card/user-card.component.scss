@@ -39,5 +39,13 @@
         font-weight: 600;
         line-height: 1.1;
         color: #f8fafb;
+
+        >i {
+            font-size: 15px;
+            vertical-align: middle;
+            margin-left: 5px;
+            cursor: pointer;
+            outline: none;
+        }
     }
 }

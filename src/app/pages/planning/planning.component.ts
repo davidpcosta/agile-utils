@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { PlanningService } from 'src/app/services/planning.service';
 
@@ -28,6 +28,7 @@ export class PlanningComponent implements OnInit {
   constructor(
     private auth: AngularFireAuth,
     private route: ActivatedRoute,
+    private router: Router,
     private planningService: PlanningService
   ) { }
 
@@ -64,6 +65,17 @@ export class PlanningComponent implements OnInit {
     this.planningService.clearMyVote().then(() => {
       this.selectedCard = 0;
     });
+  }
+
+  exit() {
+    this.planningService.exit(this.userUid).then(() => {
+      this.redirectToSignInPage();
+    });
+  }
+
+  handleKickEvent(user: any) {
+    console.log(user);
+    this.planningService.exit(user.id);
   }
 
   async showCards() {
@@ -115,5 +127,9 @@ export class PlanningComponent implements OnInit {
       });
     }
     this.hasAllVotes = hasAllVotes;
+  }
+
+  private redirectToSignInPage() {
+    this.router.navigate(['/signin']);
   }
 }
