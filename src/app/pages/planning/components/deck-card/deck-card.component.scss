@@ -1,10 +1,9 @@
 .deck-card-container {
-    width: 100px;
+    padding: 10px;
     >.card {
         color: #141414;
         position: relative;
         background-color: #f8fafb;
-        margin: 10px auto;
         width: 80px;
         height: 116px;
         border-radius: 10px;
@@ -12,8 +11,6 @@
         opacity: 0.5;
 
         &.selected {
-            // border: 2px solid #000000;
-            // box-sizing: border-box;
             opacity: 1;
             >.card-number {
                 font-size: 2em;
@@ -28,6 +25,24 @@
             transform: translate(-50%,-50%);
             font-size: 20px;
             font-weight: 800;
+        }
+    }
+}
+
+
+@media (max-width: 425px) {
+    .deck-card-container {
+        padding: 5px;
+        >.card {
+            width: 53px;
+            height: 77px;
+            &.selected {
+                opacity: 1;
+                >.card-number {
+                    font-size: 1.5em;
+                }
+    
+            }
         }
     }
 }

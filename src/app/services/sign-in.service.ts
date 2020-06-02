@@ -6,7 +6,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 })
 export class SignInService {
 
-  private defaultDeck: number[] = [0.5, 1, 2, 3, 5, 8, 13, 21];
+  private defaultDeck: string[] = ['1', '2', '3', '5', '8', '13', '21', '?'];
 
   sessionsRef: any;
   sessionRef: any;

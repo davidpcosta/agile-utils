@@ -49,3 +49,37 @@
         }
     }
 }
+
+
+@media (max-width: 425px) {
+    .user-card-container {
+        width: 100%;
+        background-color: #f8fafb;
+        display: flex;
+        flex-flow: row-reverse;
+        box-sizing: border-box;
+        border: 2px solid #52586b;
+        >.card {
+            background-color: unset;
+            width: unset;
+            height: unset;
+            
+            >.icon-waiting,
+            >.icon-done,
+            >.card-number {
+                position: unset;
+                margin-right: 15px;
+                font-size: 20px;
+            }
+        }
+        >.user-name {
+            text-align: left;
+            flex-grow: 1;
+            color: #141414;
+            line-height: 40px;
+            height: unset;
+            font-size: 1em;
+            font-weight: 600;
+        }
+    }
+}
