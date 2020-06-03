@@ -6,15 +6,17 @@ import { Subscription, Observable } from 'rxjs';
 import { SignInService } from 'src/app/services/sign-in.service';
 
 @Component({
-  selector: 'app-sign-in',
+  selector: 'sign-in-page',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss']
 })
 export class SignInComponent implements OnInit {
 
   routeSub: Subscription;
-  sessionId: string;
 
+  isLoading: boolean = false;
+  isExistingSession: boolean = false;
+  sessionId: string;
   projectName: string = '';
   userName: string = '';
 
@@ -28,21 +30,20 @@ export class SignInComponent implements OnInit {
   ngOnInit(): void {
     this.routeSub = this.route.params.subscribe(params => {
       const { sessionId } = params;
-      this.sessionId = sessionId;
-
-      // Retrieve existing session is exists
-      if (sessionId) {
+      if (sessionId) { // Retrieve existing session is exists
         this.retrieveExistingSession(sessionId);
       }
     });
   }
 
-  login() {
+  handleLoginClick() {
     // Validate fields
     if (this.userName.length == 0 || this.projectName.length == 0) {
       alert('Please fill your name and project name! :)');
       return;
     }
+
+    this.startLoading();
     this.auth.signInAnonymously()
       .then(data => {
         const uid = data.user.uid;
@@ -52,22 +53,27 @@ export class SignInComponent implements OnInit {
       })
       .catch(error => {
         alert('Sorry! Error with anonymous login.');
-        console.error(error);
+        this.stopLoading();
       });
   }
 
   private retrieveExistingSession(sessionId: string) {
+    this.startLoading()
     this.signInService.retrieveExistingSession(sessionId).subscribe(session => {
       if (!session) {
         alert('Error retrieving existing session! :(');
+      } else {
+        this.sessionId = sessionId;
+        this.projectName = session.projectName;
+        this.isExistingSession = true;
       }
-      this.projectName = session.projectName;
+      this.stopLoading()
     });
   }
 
   private createSession(userUid: string) {
     if (this.sessionId) {
-      this.addToExistingSession(userUid);
+      this.addToExistingSession(this.sessionId, userUid, this.userName);
     }
     else {
       this.createNewSession(userUid);
@@ -75,25 +81,43 @@ export class SignInComponent implements OnInit {
   }
 
   private async createNewSession(userUid: string) {
-    const { sessionId } = await this.signInService.createNewSession(userUid, this.userName, this.projectName);
-    if (!sessionId) {
-      alert('Error creating new session! :(');
-      return;
-    }
-    this.redirectToPlanningBoard(sessionId);
+    this.signInService.createNewSession(userUid, this.userName, this.projectName)
+    .then(data => {
+      if (data) {
+        this.sessionId = data.id;
+        this.addToExistingSession(this.sessionId, userUid, this.userName);
+      }
+    })
+    .catch(() => {
+      alert('Error adding user to existing session!');
+    });
   }
 
-  private async addToExistingSession(userUid: string) {
-    const success = await this.signInService.addUserToExistingSession(userUid, this.userName);
-    if (!success) {
+  private async addToExistingSession(sessionId: string,  userUid: string, userName: string) {
+    this.signInService.addUserToExistingSession(sessionId, userUid, userName)
+    .then(() => {
+      this.redirectToPlanningBoard(this.sessionId);
+    })
+    .catch(() => {
       alert('Error adding user to existing session!');
-      return;
-    }
-    this.redirectToPlanningBoard(this.sessionId);
+    })
+    .finally(() => {
+      this.stopLoading()
+    });
+    
+    
   }
 
   private redirectToPlanningBoard(sessionId: string) {
     this.router.navigate([`/planning/${sessionId}`]);
+  }
+
+  private startLoading() {
+    this.isLoading = true;
+  }
+  
+  private stopLoading() {
+    this.isLoading = false;
   }
   
 }

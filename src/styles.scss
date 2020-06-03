@@ -18,6 +18,10 @@ ul, li {
     padding: 0;
 }
 
+input {
+    outline: none;
+}
+
 button {
     border: none;
     background-color: #f8fafb;
@@ -31,5 +35,25 @@ button {
     &:disabled {
         cursor: default;
         color: lightgray;
+    }
+}
+
+
+.loader {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear; 
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);  
+    }
+    100% {
+        transform: rotate(359deg);
     }
 }

@@ -1,11 +1,15 @@
 <div class="sign-in-page">
-    <div class="field-container">
-        <label>Project name</label>
-        <input [(ngModel)]="projectName" type="text" />
+    <div class="form-container" *ngIf="!isLoading">
+        <div class="field-container">
+            <label>Project name</label>
+            <span *ngIf="isExistingSession">{{ projectName }}</span>
+            <input *ngIf="!isExistingSession" [(ngModel)]="projectName" type="text" />
+        </div>
+        <div class="field-container">
+            <label>Your name</label>
+            <input [(ngModel)]="userName" type="text" />
+        </div>
+        <button (click)="handleLoginClick()" type="button">Start planning</button>
     </div>
-    <div class="field-container">
-        <label>Your name</label>
-        <input [(ngModel)]="userName" type="text" />
-    </div>
-    <button (click)="login()" type="button">Start planning</button>
+    <i *ngIf="isLoading" class="material-icons loader">refresh</i>
 </div>
